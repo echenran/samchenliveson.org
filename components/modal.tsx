@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface ModalProps {
   isOpen: boolean
@@ -12,14 +12,53 @@ interface ModalProps {
   currentIndex: number
   src: string
   type: "image" | "video"
+  allAssets: Array<{ src: string, type: "image" | "video" }>
 }
 
-export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, type }: ModalProps) {
+export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, type, allAssets }: ModalProps) {
   const [direction, setDirection] = useState<'prev' | 'next'>('next')
+  const [isNavigating, setIsNavigating] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen || !allAssets) return
+
+    // Preload next and previous images
+    const preloadImage = (src: string) => {
+      const img: HTMLImageElement = new Image()
+      img.src = src
+    }
+
+    const preloadVideo = (src: string) => {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      video.src = src
+    }
+
+    // Preload next item
+    if (currentIndex < allAssets.length - 1) {
+      const nextAsset = allAssets[currentIndex + 1]
+      if (nextAsset.type === 'image') {
+        preloadImage(nextAsset.src)
+      } else {
+        preloadVideo(nextAsset.src)
+      }
+    }
+
+    // Preload previous item
+    if (currentIndex > 0) {
+      const prevAsset = allAssets[currentIndex - 1]
+      if (prevAsset.type === 'image') {
+        preloadImage(prevAsset.src)
+      } else {
+        preloadVideo(prevAsset.src)
+      }
+    }
+  }, [currentIndex, isOpen, allAssets])
 
   if (!isOpen) return null
 
   const handleNavigate = (newDirection: 'prev' | 'next') => {
+    setIsNavigating(true)
     setDirection(newDirection)
     onNavigate(newDirection)
   }
@@ -88,12 +127,13 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
               <motion.div
                 key={currentIndex}
                 custom={direction}
-                variants={variants}
-                initial="enter"
+                variants={isNavigating ? variants : undefined}
+                initial={isNavigating ? "enter" : false}
                 animate="center"
-                exit="exit"
+                exit={isNavigating ? "exit" : undefined}
                 transition={{ type: "tween", duration: 0.3 }}
                 className="aspect-square w-full relative"
+                onAnimationComplete={() => setIsNavigating(false)}
               >
                 {type === "image" ? (
                   <Image

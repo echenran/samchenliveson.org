@@ -7,17 +7,18 @@ import { motion } from "framer-motion"
 interface GridItemProps {
   type: "image" | "video"
   src: string
+  thumbnailSrc?: string
   alt?: string
   content?: string
   onClick?: () => void
 }
 
-export default function GridItem({ type, src, alt, onClick }: GridItemProps) {
+export default function GridItem({ type, src, thumbnailSrc, alt, onClick }: GridItemProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [thumbnail, setThumbnail] = useState<string>("")
+  const [thumbnail, setThumbnail] = useState<string>(thumbnailSrc || "")
 
   useEffect(() => {
-    if (type === "video") {
+    if (type === "video" && !thumbnailSrc) {
       const video = document.createElement('video')
       video.src = src
       video.preload = "metadata"
@@ -36,22 +37,35 @@ export default function GridItem({ type, src, alt, onClick }: GridItemProps) {
         setThumbnail(canvas.toDataURL('image/jpeg'))
       }
     }
-  }, [src, type])
+  }, [src, type, thumbnailSrc])
 
   return (
     <motion.div 
       className="aspect-square relative opacity-20 hover:opacity-100 transition-opacity duration-300 bg-purple-200 cursor-pointer" 
+      style={{ willChange: 'opacity, transform' }}
       whileHover={{ scale: 1 }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
     >
       {type === "image" && (
-        <Image
-          src={src}
-          alt={alt || ""}
-          fill
-          className="object-cover"
-        />
+        <>
+          {thumbnailSrc && (
+            <Image
+              src={thumbnailSrc}
+              alt={alt || ""}
+              fill
+              className="object-cover blur-up-animation"
+              priority
+            />
+          )}
+          <Image
+            src={src}
+            alt={alt || ""}
+            fill
+            className="object-cover"
+            loading={thumbnailSrc ? "lazy" : "eager"}
+          />
+        </>
       )}
       {type === "video" && (
         <>

@@ -69,23 +69,40 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="relative w-96 h-48 flex items-center justify-center"
+              className="relative w-600 h-128 p-24 flex flex-col items-center justify-center"
             >
               <div
-                className="absolute inset-0 bg-gradient-radial from-white via-white to-transparent"
+                className="absolute -inset-20"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%)",
+                    "radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 70%)",
                 }}
               />
               <h1 className="text-4xl text-center font-serif relative z-10">Sam Chen Lives On</h1>
+              <p className="relative z-10 mt-4 text-center">
+                <p>Samuel Ran Chen (2006 - 2025) was a beloved son, brother, and friend.</p>
+                <p>He left this world too soon, but his enthusiasm and zest for life live on.</p>
+              </p>
+              <p className="relative z-10 mt-4 text-center">
+                <p>The Sam Chen Lives On Foundation is a non-profit organization dedicated to supporting special needs children and adults.</p>
+                <p>If you would like to help preserve Sam's legacy and support the foundation, please donate in one of the following ways:</p>
+                <p>Zelle: samuelchenangel0510@gmail.com</p>
+                <p>Paypal: email</p>
+                <p>Check: Mail to ...</p>
+              </p>
+              <p className="relative z-10 mt-4 text-center">
+                <p>If you would like to volunteer with grant-writing or other activities, please fill out the form below.</p>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe1l0VHiFlITKYbi9O-w6bXkUWfxptIFd_q8NiOi7fRRaQWMA/viewform">.
+                    <div></div>
+                    </a>
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* YouTube video (scrolls with page) */}
-      <div className="max-w-4xl mx-auto mb-24">
+      <div className="max-w-4xl mx-auto my-24">
         <div
           ref={videoRef}
           className={`aspect-video transition-opacity duration-300 ${showVideo ? "opacity-100" : "opacity-0"}`}

@@ -76,3 +76,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes blur-up {
+  from {
+    filter: blur(20px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+.blur-up-animation {
+  animation: blur-up 0.3s ease-out;
+}
+
+.content-container {
+  border-radius: 15px;
+  padding: 20px;
+}

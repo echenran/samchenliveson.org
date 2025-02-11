@@ -33,5 +33,13 @@ export async function getAssets() {
     path: `/videos/${file}`
   }))
 
-  return shuffleArray([...images, ...videos])
+  const assets = shuffleArray([...images, ...videos])
+
+  // For each asset, generate a thumbnail version
+  const assetsWithThumbnails = assets.map(asset => ({
+    ...asset,
+    thumbnailSrc: `/thumbnails/${asset.path}` // You'll need to implement thumbnail generation
+  }))
+
+  return assetsWithThumbnails
 } 
