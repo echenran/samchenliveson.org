@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
 interface GridItemProps {
@@ -19,7 +19,7 @@ interface GridItemProps {
 }
 
 export default function GridItem({ type, src, thumbnailSrc, alt, content, onClick, isMobile }: GridItemProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
+  // const videoRef = useRef<HTMLVideoElement>(null)
   const [thumbnail, setThumbnail] = useState<string>(thumbnailSrc || "")
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function GridItem({ type, src, thumbnailSrc, alt, content, onClic
     if (isMobile) {
       return (
         <motion.div 
-          className="w-full opacity-100 mobile-class relative cursor-pointer bg-purple-200 " 
+          className="w-full opacity-100 mobile-class relative cursor-pointer" 
           style={{ willChange: 'transform' }}
         >
           {switchMediaType(type, content)}

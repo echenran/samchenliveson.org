@@ -84,7 +84,7 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
                 <span>Check: Mail to ...</span>
               </>
               ) : (<>
-                <span>The Sam Chen Lives On Foundation is a non-profit organization dedicated to supporting special needs children and adults. If you would like to help preserve Sam's legacy and support the foundation, you can donate in one of the following ways:</span>
+                <span>The Sam Chen Lives On Foundation is a non-profit organization dedicated to supporting special needs children and adults. If you would like to help preserve Sam&apos;s legacy and support the foundation, you can donate in one of the following ways:</span>
                 <br />
                 <span>Zelle: samuelchenangel0510@gmail.com</span>
                 <br />
@@ -203,7 +203,7 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
                         <span>The Sam Chen Lives On Foundation is a non-profit organization dedicated to supporting special needs children and adults.</span>
                         <br />
                         <br />
-                        <span>If you would like to help preserve Sam's legacy and support the foundation, you can donate in one of the following ways:</span>
+                        <span>If you would like to help preserve Sam&apos;s legacy and support the foundation, you can donate in one of the following ways:</span>
                         <br />
                         <span>Zelle: samuelchenangel0510@gmail.com</span>
                         <br />
@@ -223,7 +223,7 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
                   {isChinese ? 
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSd7Uw0qYFPMfC5RW_HLe9gthjWGbWViqnzoyAvGbrT3zyMNnQ/viewform" className="relative z-20 pointer-events-auto">
                       <button className="bg-purple-700 text-white px-4 py-2 mt-4 rounded-md">
-                      报名志愿者"
+                      报名志愿者
                       </button>
                     </a>
                   : 
