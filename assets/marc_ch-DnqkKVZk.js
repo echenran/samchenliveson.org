@@ -1,0 +1,1 @@
+const t="Marc",c="Brother from church",o=["早晨看到消息，想了一天依然没有找到适合的话来劝慰你们，我知道一个节哀是无力的，Samuel是幸运的，有你们这样的父母，又经常沐浴在主的光里，每一次听赞美歌都能听到他那大力的掌声，每一次夸赞别人都是那么的诚恳，我也被他夸过的，主是慈悲的，带走Samuel是有主的作用的，在那个主耶和华应许的地方，在主耶稣为我们预备好的地方，终有一天我们都再次听到他那热烈的掌声！愿主的慈爱保守他的所有！阿们"],r={author:t,description:c,text:o};export{t as author,r as default,c as description,o as text};
