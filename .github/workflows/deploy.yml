@@ -21,6 +21,11 @@ jobs:
       - name: Build
         run: npm run build
         
+      - name: Copy static files
+        run: |
+          cp -r public/videos out/videos
+          cp -r public/text out/text
+        
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:

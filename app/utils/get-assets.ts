@@ -21,21 +21,28 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray
 }
 
+const getPublicPath = (path: string) => {
+    const basePath = process.env.NODE_ENV === 'production' ? '/samchenliveson.org' : ''
+    return `${basePath}${path}`
+}
+
 export async function getAssets() {
-  const publicDir = join(process.cwd(), 'public')
+    const publicDir = join(process.cwd(), 'public')
+    // const publicDir = `${process.env.NEXT_PUBLIC_BASE_PATH}`
+    console.log("publicDir:", publicDir)
   
   // Read image files
   const imageFiles = readdirSync(join(publicDir, 'images'))
   const images: Asset[] = imageFiles.map(file => ({
     type: "image",
-    path: `/images/${file}`
+    path: getPublicPath(`/images/${file}`)
   }))
 
   // Read video files
   const videoFiles = readdirSync(join(publicDir, 'videos'))
   const videos: Asset[] = videoFiles.map(file => ({
     type: "video",
-    path: `/videos/${file}`
+    path: getPublicPath(`/videos/${file}`)
   }))
 
   // Read JSON files
@@ -46,7 +53,7 @@ export async function getAssets() {
     const content = JSON.parse(fileContent) // Parse the JSON content
     return {
       type: "text",
-      path: `/text/${file}`,
+      path: getPublicPath(`/text/${file}`),
       content
     }
   })
