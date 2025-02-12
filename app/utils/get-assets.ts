@@ -1,10 +1,15 @@
-import { readdirSync } from 'fs'
+import { readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 import 'server-only'
 
 export interface Asset {
-  type: "image" | "video"
+  type: "image" | "video" | "text"
   path: string
+  content?: {
+    author: string
+    description: string
+    text: string[]
+  }
 }
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -33,7 +38,20 @@ export async function getAssets() {
     path: `/videos/${file}`
   }))
 
-  const assets = shuffleArray([...images, ...videos])
+  // Read JSON files
+  const textFiles = readdirSync(join(publicDir, 'text'))
+  const texts: Asset[] = textFiles.map(file => {
+    const filePath = join(publicDir, 'text', file)
+    const fileContent = readFileSync(filePath, 'utf-8')
+    const content = JSON.parse(fileContent) // Parse the JSON content
+    return {
+      type: "text",
+      path: `/text/${file}`,
+      content
+    }
+  })
+
+  const assets = shuffleArray([...images, ...videos, ...texts])
 
   // For each asset, generate a thumbnail version
   const assetsWithThumbnails = assets.map(asset => ({

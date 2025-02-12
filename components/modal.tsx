@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import NextImage from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from "react"
@@ -11,11 +11,19 @@ interface ModalProps {
   onNavigate: (direction: 'prev' | 'next') => void
   currentIndex: number
   src: string
-  type: "image" | "video"
-  allAssets: Array<{ src: string, type: "image" | "video" }>
+  type: "image" | "video" | "text"
+  content?: {
+    author: string
+    description: string
+    text: string[]
+  }
+  allAssets: Array<{ src: string, type: "image" | "video" | "text", content?: {
+    author: string
+    description: string
+    text: string[]
+  } }>
 }
-
-export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, type, allAssets }: ModalProps) {
+export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, type, content, allAssets }: ModalProps) {
   const [direction, setDirection] = useState<'prev' | 'next'>('next')
   const [isNavigating, setIsNavigating] = useState(false)
 
@@ -24,7 +32,7 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
 
     // Preload next and previous images
     const preloadImage = (src: string) => {
-      const img: HTMLImageElement = new Image()
+      const img: HTMLImageElement = new window.Image()
       img.src = src
     }
 
@@ -136,13 +144,13 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
                 onAnimationComplete={() => setIsNavigating(false)}
               >
                 {type === "image" ? (
-                  <Image
+                  <NextImage
                     src={src}
                     alt={`Item ${currentIndex + 1}`}
                     fill
                     className="object-contain"
                   />
-                ) : (
+                ) : type === "video" ? (
                   <video
                     src={src}
                     controls
@@ -151,6 +159,14 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
                   >
                     <source src={src} type="video/quicktime" />
                   </video>
+                ) : (
+                  <div className="p-4">
+                    <h2 className="text-lg font-bold">{content?.author}</h2>
+                    <p className="text-sm italic mb-4">{content?.description}</p>
+                    {content?.text.map((paragraph, index) => (
+                      <p key={index} className="mb-2">{paragraph}</p>
+                    ))}
+                  </div>
                 )}
               </motion.div>
             </AnimatePresence>

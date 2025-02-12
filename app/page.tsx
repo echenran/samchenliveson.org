@@ -6,7 +6,7 @@ export default async function MemorialPage() {
   const assets = await getAssets()
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative z-10">
       <ClientContent initialAssets={assets} />
     </div>
   )
