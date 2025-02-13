@@ -1,15 +1,14 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useInView } from "react-intersection-observer"
 import { motion, AnimatePresence } from "framer-motion"
-import GridItem from "@/components/grid-item"
-import Modal from "@/components/modal"
-import type { Asset } from "@/app/utils/get-assets"
+import GridItem from "./grid-item"
+import Modal from "./modal"
+import type { Asset } from "../src/utils/get-assets"
 import { useMediaQuery } from 'react-responsive'
 
-export default function ClientContent({ initialAssets }: { initialAssets: Asset[] }) {
-  const [assets] = useState<Asset[]>(() => initialAssets)
+export default function ClientContent({ englishAssets, chineseAssets }: { englishAssets: Asset[], chineseAssets: Asset[] }) {
+  console.log('ClientContent initialAssets:', englishAssets) // Debug log
+
   const [showVideo, setShowVideo] = useState(false)
   const isMobile = useMediaQuery({ maxWidth: 768 })
   const [modalState, setModalState] = useState({
@@ -21,12 +20,31 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
   })
   const [isChinese, setIsChinese] = useState(false)
 
+  const [assets, setAssets] = useState(englishAssets)
+  useEffect(() => {
+    setAssets(englishAssets)
+  }, [englishAssets])
+
+  useEffect(() => {
+    if (isChinese) {
+      setAssets(chineseAssets)
+    } else {
+      setAssets(englishAssets)
+    }
+  }, [isChinese])
+
   useEffect(() => {
     setShowVideo(inView)
   }, [inView])
 
   const handleItemClick = (index: number) => {
-    setModalState({ isOpen: true, currentIndex: index })
+    console.log('handleItemClick index:', index)
+    console.log(`assets (len = ${assets.length}):`, assets)
+    if (index >= 0 && index < assets.length) {
+      setModalState({ isOpen: true, currentIndex: index })
+    } else {
+      console.error("Invalid index:", index)
+    }
   }
 
   const handleCloseModal = () => {
@@ -62,7 +80,7 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
             {isChinese 
               ? (
               <>
-              <span>陈然（2006 - 2025）是一位深受爱戴的儿子、兄弟和朋友。他过早地离开了这个世界，但他的热情和对生活的热爱依然存在。</span>
+              <span>陈冉思源（2006 - 2025）是一位深受爱戴的儿子、兄弟和朋友。他过早地离开了这个世界，但他的热情和对生活的热爱依然存在。</span>
               </>
               ) : (
               <>
@@ -119,16 +137,20 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
 
         {/* Grid of tiles */}
         <div className="grid grid-cols-1 md:grid-cols-6">
-          {assets.map((asset, i) => (
-            <GridItem
-              key={i}
-              type={asset.type}
-              src={asset.path}
-              content={asset.content}
-              onClick={() => handleItemClick(i)}
-              isMobile={isMobile}
-            />
-          ))}
+          {assets.map((asset, i) => {
+            console.log('Rendering asset:', asset) // Debug log
+            return (
+              <GridItem
+                key={i}
+                type={asset.type}
+                path={asset.path}
+                content={asset.content}
+                openModal={() => handleItemClick(i)}
+                isMobile={isMobile}
+                thumbnailPath={asset.thumbnailPath ?? ''}
+              />
+            )
+          })}
         </div>
 
         {/* Modal */}
@@ -179,7 +201,7 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
                 </h1>
                 <p className="relative z-10 mt-4 text-center">
                   {isChinese 
-                    ? "陈然（2006 - 2025）是一位深受爱戴的儿子、兄弟和朋友。他过早地离开了这个世界，但他的热情和对生活的热爱依然存在。"
+                    ? "陈冉思源（2006 - 2025）是一位深受爱戴的儿子、兄弟和朋友。他过早地离开了这个世界，但他的热情和对生活的热爱依然存在。"
                     : "Samuel Ran Chen (2006 - 2025) was a beloved son, brother, and friend. He left this world too soon, but his enthusiasm and zest for life live on."
                   }
                 </p>
@@ -187,10 +209,10 @@ export default function ClientContent({ initialAssets }: { initialAssets: Asset[
                   {isChinese 
                     ? (
                       <>
-                          <span>陈三精神永存基金会是一个致力于支持特殊需要儿童和成人的非营利组织。</span>
+                          <span>陈冉思源精神永存基金会是一个致力于支持特殊需要儿童和成人的非营利组织。</span>
                           <br />
                           <br />
-                          <span>如果您想帮助保存陈三的遗产并支持基金会，请通过以下方式捐款:</span>
+                          <span>如果您想帮助保存陈冉思源的遗产并支持基金会，请通过以下方式捐款:</span>
                           <br />
                           <span>Zelle: samuelchenangel0510@gmail.com</span>
                           <br />

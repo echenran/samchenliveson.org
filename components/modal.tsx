@@ -1,69 +1,88 @@
 "use client"
 
-import NextImage from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from "react"
 
+interface Content {
+  author: string;
+  description: string;
+  text: string[];
+}
+
 interface ModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onNavigate: (direction: 'prev' | 'next') => void
-  currentIndex: number
-  src: string
-  type: "image" | "video" | "text"
-  content?: {
-    author: string
-    description: string
-    text: string[]
-  }
-  allAssets: Array<{ src: string, type: "image" | "video" | "text", content?: {
-    author: string
-    description: string
-    text: string[]
-  } }>
+  isOpen: boolean;
+  onClose: () => void;
+  onNavigate: (direction: 'prev' | 'next') => void;
+  currentIndex: number;
+  src: string;
+  type: "image" | "video" | "text";
+  content?: Content;
+  allAssets: Array<{
+    src: string;
+    type: "image" | "video" | "text";
+    content?: Content;
+  }>;
 }
 export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, type, content, allAssets }: ModalProps) {
+  if (!isOpen) return null
+
+  const asset = allAssets[currentIndex] || {}
+  const assetType = asset.type || "image"
+  const assetSrc = asset.src || ""
+  const assetContent = asset.content || { author: '', description: '', text: [] };
+
+  // Debugging
+  console.log('Current asset:', asset)
+
+  console.log('Modal props:', {
+    isOpen,
+    currentIndex,
+    src,
+    type,
+    content,
+    allAssets: allAssets.map(asset => ({
+      src: asset.src,
+      type: asset.type,
+      content: asset.content
+    }))
+  })
+
   const [direction, setDirection] = useState<'prev' | 'next'>('next')
   const [isNavigating, setIsNavigating] = useState(false)
 
   useEffect(() => {
-    if (!isOpen || !allAssets) return
+    if (!isOpen || !allAssets) return;
 
-    // Preload next and previous images
-    const preloadImage = (src: string) => {
-      const img: HTMLImageElement = new window.Image()
-      img.src = src
-    }
-
-    const preloadVideo = (src: string) => {
-      const video = document.createElement('video')
-      video.preload = 'metadata'
-      video.src = src
-    }
-
-    // Preload next item
-    if (currentIndex < allAssets.length - 1) {
-      const nextAsset = allAssets[currentIndex + 1]
-      if (nextAsset.type === 'image') {
-        preloadImage(nextAsset.src)
-      } else {
-        preloadVideo(nextAsset.src)
+    const preloadMedia = (src: string, type: "image" | "video") => {
+      if (type === 'image') {
+        const img = new Image();
+        img.src = src;
+      } else if (type === 'video') {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.src = src;
       }
-    }
+    };
 
-    // Preload previous item
-    if (currentIndex > 0) {
-      const prevAsset = allAssets[currentIndex - 1]
-      if (prevAsset.type === 'image') {
-        preloadImage(prevAsset.src)
-      } else {
-        preloadVideo(prevAsset.src)
+    const preloadAsset = (index: number) => {
+      if (index >= 0 && index < allAssets.length) {
+        const asset = allAssets[index];
+        if (asset.type === 'image' || asset.type === 'video') {
+          preloadMedia(asset.src, asset.type);
+        }
       }
-    }
-  }, [currentIndex, isOpen, allAssets])
+    };
 
-  if (!isOpen) return null
+    // Preload next and previous items
+    preloadAsset(currentIndex + 1);
+    preloadAsset(currentIndex - 1);
+
+    // Preload two items to the left and right
+    preloadAsset(currentIndex + 2);
+    preloadAsset(currentIndex - 2);
+
+  }, [currentIndex, isOpen, allAssets]);
 
   const handleNavigate = (newDirection: 'prev' | 'next') => {
     setIsNavigating(true)
@@ -73,13 +92,16 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
 
   const variants = {
     enter: (direction: 'prev' | 'next') => ({
-      x: direction === 'next' ? '100%' : '-100%'
+      x: direction === 'next' ? '100%' : '-100%',
+      opacity: 0
     }),
     center: {
-      x: 0
+      x: 0,
+      opacity: 1
     },
     exit: (direction: 'prev' | 'next') => ({
-      x: direction === 'next' ? '-100%' : '100%'
+      x: direction === 'next' ? '-100%' : '100%',
+      opacity: 0
     })
   }
 
@@ -119,7 +141,7 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.95 }}
-            className="relative bg-white rounded-lg w-full p-4 overflow-hidden"
+            className="relative bg-white rounded-lg w-full p-4 overflow-hidden flex items-center justify-center max-h-screen"
             onClick={e => e.stopPropagation()}
           >
             {/* Close button */}
@@ -140,34 +162,34 @@ export default function Modal({ isOpen, onClose, onNavigate, currentIndex, src, 
                 animate="center"
                 exit={isNavigating ? "exit" : undefined}
                 transition={{ type: "tween", duration: 0.3 }}
-                className="aspect-square w-full relative"
+                className="aspect-square w-full relative flex justify-start h-full"
                 onAnimationComplete={() => setIsNavigating(false)}
               >
-                {type === "image" ? (
-                  <NextImage
-                    src={src}
+                {assetType === "image" ? (
+                  <img
+                    src={assetSrc}
                     alt={`Item ${currentIndex + 1}`}
-                    fill
-                    className="object-contain"
+                    className="w-full h-full object-contain"
+                    loading="lazy"
                   />
-                ) : type === "video" ? (
+                ) : assetType === "video" ? (
                   <video
-                    src={src}
+                    src={assetSrc}
                     controls
                     className="w-full h-full object-contain"
                     playsInline
                   >
-                    <source src={src} type="video/quicktime" />
+                    <source src={assetSrc} type="video/quicktime" />
                   </video>
-                ) : (
-                  <div className="p-4">
-                    <h2 className="text-lg font-bold">{content?.author}</h2>
-                    <p className="text-sm italic mb-4">{content?.description}</p>
-                    {content?.text.map((paragraph, index) => (
+                ) : assetType === "text" && assetContent ? (
+                  <div className="p-4 flex flex-col items-start justify-start overflow-y-auto max-h-full w-full">
+                    <h2 className="text-lg font-bold">{assetContent.author}</h2>
+                    <p className="text-sm italic mb-4">{assetContent.description}</p>
+                    {assetContent.text?.map((paragraph, index) => (
                       <p key={index} className="mb-2">{paragraph}</p>
                     ))}
                   </div>
-                )}
+                ) : null}
               </motion.div>
             </AnimatePresence>
           </motion.div>
