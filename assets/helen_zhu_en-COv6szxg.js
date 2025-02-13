@@ -1,0 +1,1 @@
+const e="Helen Zhu",t="Family friend",o=["Samuel will be forever remembered by many people because he is so pure and loving and has impacted lots of us!"],n={author:e,description:t,text:o};export{e as author,n as default,t as description,o as text};

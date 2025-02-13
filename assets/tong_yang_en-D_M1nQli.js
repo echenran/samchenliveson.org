@@ -1,0 +1,1 @@
+const e="Tong Yang",n="Church sister",t=["Samuel was an angel sent by God. Today, he has been called back to heaven, sitting at the right hand of the Lord. There is no illness, no suffering—he is in heaven blessing his family. Amen!"],s={author:e,description:n,text:t};export{e as author,s as default,n as description,t as text};
